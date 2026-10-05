@@ -26,6 +26,7 @@
   givaro,
   glpk,
   gsl,
+  highs,
   lapack,
   lcalc,
   libbraiding,
@@ -140,6 +141,7 @@ buildPythonPackage rec {
     givaro
     glpk
     gsl
+    highs
     lapack
     lcalc
     libbraiding
