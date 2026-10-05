@@ -13,7 +13,7 @@
 # all get the same sources with the same patches applied.
 
 stdenv.mkDerivation (finalAttrs: {
-  version = "10.9";
+  version = "10.10";
   pname = "sage-src";
 
   __structuredAttrs = true;
@@ -23,7 +23,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "sagemath";
     repo = "sage";
     tag = finalAttrs.version;
-    hash = "sha256-8IBCQYdmL7ane7/WOoogArbwgqPDtL8ecz9GIzuEfOU=";
+    hash = "sha256-73lfOHk1Yx3b7BAS8xGK2zbvpDtWJSiufJcmTSy9U90=";
   };
 
   # The shipped scripts (e.g. build/bin/sage-site) use `#!/usr/bin/env bash`.
@@ -36,8 +36,8 @@ stdenv.mkDerivation (finalAttrs: {
   configure-src = fetchurl {
     # the hash below is the tagged commit's _parent_. it can also be found by looking for
     # the "configure" asset at https://github.com/sagemath/sage/releases/tag/${version}
-    url = "mirror://sageupstream/configure/configure-8592858fd4c0eb936cfa9ebf704d165f6b857617.tar.gz";
-    hash = "sha256-jakdc+4S/2uRooEaXMlNZpo01dVBumVp7HHHP4iZu0c=";
+    url = "mirror://sageupstream/configure/configure-3801b3c56c2b7de7b3e41ec990b80d40a52b46cd.tar.gz";
+    hash = "sha256-2QxWTK/H5u4E1heZDZNt6iXy3G3RxFvIn6pcToZPM4U=";
   };
 
   # Patches needed because of particularities of nix or the way this is packaged.
@@ -52,23 +52,18 @@ stdenv.mkDerivation (finalAttrs: {
     # docbuild separately.
     ./patches/sagedoc-standalone-meson.patch
 
-    # Silence some warnings during docbuild. Imported from Arch.
-    ./patches/sagedoc-silence-formatting-warnings.patch
-
     # Revert https://github.com/sagemath/sage/pull/40520. It causes
     # "undefined symbol: cblas_ctrmv" errors.
     ./patches/revert-blas-mesonification.patch
 
-    # https://github.com/sagemath/sage/pull/42587
-    ./patches/link-ntl-directly-for-ntl-cython-extensions.patch
-
     # https://github.com/sagemath/sage/pull/41637 causes problems when
     # docbuilding.
-    (fetchpatch2 {
-      url = "https://github.com/sagemath/sage/commit/854ea0e546ee24ff09072ee77550b944b54f697c.patch?full_index=1";
-      revert = true;
-      hash = "sha256-j5evAmOtKEG4OVFb/w/SVY2vvP5BSkqHBDmnroh8XY0=";
-    })
+    # A bit broken... in 10.10. Take a look at it later
+    #(fetchpatch2 {
+    #  url = "https://github.com/sagemath/sage/commit/854ea0e546ee24ff09072ee77550b944b54f697c.patch?full_index=1";
+    #  revert = true;
+    #  hash = "sha256-j5evAmOtKEG4OVFb/w/SVY2vvP5BSkqHBDmnroh8XY0=";
+    #})
   ]
   ++ lib.optionals (stdenv.cc.isClang) [
     # https://github.com/NixOS/nixpkgs/pull/264126
@@ -89,30 +84,6 @@ stdenv.mkDerivation (finalAttrs: {
 
     # https://github.com/sagemath/sage/issues/42473
     ./patches/lower-sleep2-test-threshold.patch
-
-    # https://github.com/sagemath/sage/pull/42611
-    ./patches/faster-flint.patch
-
-    # https://github.com/sagemath/sage/pull/41954, landed in 10.10.beta0
-    (fetchpatch2 {
-      name = "gap-element-stability.patch";
-      url = "https://github.com/sagemath/sage/commit/11da83dd3666c2509288a828c54eb0273ee0cf50.patch?full_index=1";
-      hash = "sha256-CjZyeUJVIevDaStLs+9BMT9JlISEdRw3TyTIso/BXi0=";
-    })
-
-    # https://github.com/sagemath/sage/pull/42009, landed in 10.10.beta0
-    (fetchpatch2 {
-      name = "gap-root-paths.patch";
-      url = "https://github.com/sagemath/sage/commit/24c9605a770b2419cd401bf6c8780bb4be923244.patch?full_index=1";
-      hash = "sha256-68w2HWLR6mb13BWi5Fb6SfPAqPbdJrns0l5T6SoMqNI=";
-    })
-
-    # https://github.com/sagemath/sage/pull/42612
-    (fetchpatch2 {
-      name = "relax-svd-doctest-tolerance.patch";
-      url = "https://github.com/sagemath/sage/commit/8f7b7299c985f74179555b2c7a0dad8a741bf879.patch?full_index=1";
-      hash = "sha256-9o0t5n3oWt/NmQTRlDsad5g8g7FhSYpAV62BMvY+w2Q=";
-    })
   ];
 
   # Patches needed because of package updates. We could just pin the versions of
@@ -122,47 +93,6 @@ stdenv.mkDerivation (finalAttrs: {
   # should come from or be proposed to upstream. This list will probably never
   # be empty since dependencies update all the time.
   packageUpgradePatches = [
-    # https://github.com/sagemath/sage/pull/42089, landed in 10.10.beta0
-    (fetchpatch2 {
-      name = "flint-3.5.0-update.patch";
-      url = "https://github.com/sagemath/sage/commit/f1cf1552c2c7636fa069fbc47c5bfc937753f7b2.patch?full_index=1";
-      hash = "sha256-Z3SU6cSCnnaTZLcTh0LNb672HyBqhBd6+iYUEeK1cGQ=";
-    })
-
-    # https://github.com/sagemath/sage/pull/40679, rebased by void linux
-    (fetchpatch2 {
-      name = "maxima-5.49-update.patch";
-      url = "https://raw.githubusercontent.com/void-linux/void-packages/f8951eacbdc6538af3330d17d5587a0c208ab349/srcpkgs/sagemath/patches/40679-Update_to_maxima_5.49.patch";
-      hash = "sha256-n6YSVNomLM7f5kRAGzhijag8QnlXxKJz9RHFLVtZpdk=";
-    })
-
-    # https://github.com/sagemath/sage/pull/42384, landed in 10.10.beta4
-    (fetchpatch2 {
-      name = "matplotlib-3.11-update.patch";
-      url = "https://github.com/sagemath/sage/commit/3d3a04bbfb66dc1141afadbfaefa01dff8749761.patch?full_index=1";
-      hash = "sha256-LlEblRKlPPmvSU26LmT6DTxFElvhA9SBkrU3xeIFZu4=";
-    })
-
-    # https://github.com/sagemath/sage/pull/42437, landed in 10.10.beta5
-    (fetchpatch2 {
-      name = "numpy-2.5-update.patch";
-      url = "https://github.com/sagemath/sage/commit/3e709448881442c133047f2993db39d855c70bd8.patch?full_index=1";
-      hash = "sha256-8vxIYG6yhCBML9vioJhAjBgTeCCGmdfk7qAtEEQnK/g=";
-    })
-
-    # https://github.com/sagemath/sage/pull/42465, landed in 10.10.beta5
-    (fetchpatch2 {
-      name = "scipy-1.18-update.patch";
-      url = "https://github.com/sagemath/sage/commit/926f32aab22f81ddb9fda874a20fee84c7bfacc3.patch?full_index=1";
-      hash = "sha256-EMn/fr5WlRQtFj5GHo02kczasmKaiqFfRSVZo2uvOPI=";
-    })
-
-    # https://github.com/sagemath/sage/pull/42480, landed in 10.10.beta5
-    (fetchpatch2 {
-      name = "gfan-0_8-doctest-order.patch";
-      url = "https://github.com/sagemath/sage/commit/7ee0e41ce28f2c52b2ecb1041032e605af4ce0cc.patch?full_index=1";
-      hash = "sha256-msXUEbeO2rbP5m+EV8WmX6i8oQIfRLWEDGbIdz//lek=";
-    })
 
     # https://github.com/sagemath/sage/pull/42742, landed in 10.10.rc0
     (fetchpatch2 {
@@ -173,9 +103,6 @@ stdenv.mkDerivation (finalAttrs: {
       hash = "sha256-br8WpGWNsYTrZ1lSkaKqnDNusBQ1SDCStBNSiXrptME=";
     })
 
-    # work around https://github.com/scipy/scipy/issues/25471, which is
-    # fixed as part of SciPy 1.18.1.
-    ./patches/scipy-1_18-workaround.patch
   ];
 
   patches = finalAttrs.nixPatches ++ finalAttrs.bugfixPatches ++ finalAttrs.packageUpgradePatches;

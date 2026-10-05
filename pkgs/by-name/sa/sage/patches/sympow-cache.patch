@@ -2,7 +2,7 @@ diff --git a/src/sage/lfunctions/sympow.py b/src/sage/lfunctions/sympow.py
 index 92cb01fd73..b123e6accc 100644
 --- a/src/sage/lfunctions/sympow.py
 +++ b/src/sage/lfunctions/sympow.py
-@@ -50,6 +50,7 @@ from __future__ import print_function, absolute_import
+@@ -48,6 +48,7 @@ from __future__ import print_function, absolute_import
  
  import os
  
@@ -10,7 +10,7 @@ index 92cb01fd73..b123e6accc 100644
  from sage.structure.sage_object import SageObject
  from sage.misc.all import pager
  from sage.misc.verbose import verbose
-@@ -78,7 +79,7 @@ class Sympow(SageObject):
+@@ -77,7 +78,7 @@ class Sympow(SageObject):
          """
          Used to call sympow with given args
          """
