@@ -94,14 +94,9 @@ stdenv.mkDerivation (finalAttrs: {
   # be empty since dependencies update all the time.
   packageUpgradePatches = [
 
-    # https://github.com/sagemath/sage/pull/42742, landed in 10.10.rc0
-    (fetchpatch2 {
-      name = "cython-3.3-update.patch";
-      url = "https://github.com/sagemath/sage/commit/0c6f9825c5347cd8b455928950a1336fe7f630f2.patch?full_index=1";
-      # only reverts a cython version constraint that 10.9 does not have
-      excludes = [ "pyproject.toml" ];
-      hash = "sha256-br8WpGWNsYTrZ1lSkaKqnDNusBQ1SDCStBNSiXrptME=";
-    })
+    # Uncomment whenever pari/gp is bumped to version 2.19 in nixpkgs
+    # https://github.com/sagemath/sage/pull/42873 # Landed in 11.0.beta0
+    # ./patches/remove_deprecated_pari2.19_functions.patch
 
   ];
 
