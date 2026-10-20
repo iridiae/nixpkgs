@@ -2,7 +2,8 @@
   lib,
   buildPythonPackage,
   python,
-  fetchPypi,
+  fetchFromGitHub,
+  # fetchPypi,
   pari,
   pkg-config,
   gmp,
@@ -17,18 +18,15 @@
 buildPythonPackage rec {
   pname = "cypari2";
   # upgrade may break sage, please test the sage build or ping the sage team on upgrade
-  version = "2.2.4";
+  version = "2.2.6";
   pyproject = true;
 
-  src = fetchPypi {
-    inherit pname version;
-    hash = "sha256-+fDplKmgsGRhkyBBHh2cMDFYhH4FW1gILv2t5ayX9hM=";
+  src = fetchFromGitHub {
+    owner = "sagemath";
+    repo = "cypari2";
+    tag = "${version}";
+    hash = "sha256-Z46xxoFTRBRiCEJEpcYEtSQgYmTaHLXqWemuRM4G9mw=";
   };
-
-  preConfigure = ''
-    substituteInPlace cypari2/meson.build \
-       --replace-fail "'cypari2.py'" "'cypari2.pc'"
-  '';
 
   build-system = [
     meson-python
@@ -59,6 +57,6 @@ buildPythonPackage rec {
     description = "Cython bindings for PARI";
     license = lib.licenses.gpl2Plus;
     teams = [ lib.teams.sage ];
-    homepage = "https://github.com/defeo/cypari2";
+    homepage = "https://github.com/sagemath/cypari2";
   };
 }
