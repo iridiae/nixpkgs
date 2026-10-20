@@ -64,6 +64,8 @@ stdenv.mkDerivation (finalAttrs: {
     #  revert = true;
     #  hash = "sha256-j5evAmOtKEG4OVFb/w/SVY2vvP5BSkqHBDmnroh8XY0=";
     #})
+
+    # 42908 ? Could also be considered bugfix.
   ]
   ++ lib.optionals (stdenv.cc.isClang) [
     # https://github.com/NixOS/nixpkgs/pull/264126
