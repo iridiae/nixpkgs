@@ -36,6 +36,8 @@ stdenv.mkDerivation (finalAttrs: {
   configure-src = fetchurl {
     # the hash below is the tagged commit's _parent_. it can also be found by looking for
     # the "configure" asset at https://github.com/sagemath/sage/releases/tag/${version}
+    # the two lines above were only partially true for 10.10: The previous commit on master
+    # was available in the github release, but mirrors only had the previous commit on develop
     url = "mirror://sageupstream/configure/configure-3801b3c56c2b7de7b3e41ec990b80d40a52b46cd.tar.gz";
     hash = "sha256-2QxWTK/H5u4E1heZDZNt6iXy3G3RxFvIn6pcToZPM4U=";
   };
